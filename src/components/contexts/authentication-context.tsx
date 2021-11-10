@@ -11,6 +11,7 @@ import { AccessTokenResponse, UserResponse } from '../../util/types/response-typ
 export type AuthenticationContextState = {
   authUser: UserData;
   setAuthUser(authUser: UserData): void;
+  updateAuthUser(): void;
 }
 
 /**
@@ -18,7 +19,7 @@ export type AuthenticationContextState = {
  * 
  * This context is used to manipulate the authenticated user.
  */
-export const AuthenticationContext = React.createContext<AuthenticationContextState>({ authUser: null, setAuthUser: null });
+export const AuthenticationContext = React.createContext<AuthenticationContextState>({ authUser: null, setAuthUser: null, updateAuthUser: null });
 
 /**
  * Authentication context provider.
@@ -60,5 +61,9 @@ export const AuthenticationContextProvider: React.FC = (props) => {
     }
   }, [accessTokenQuery.status]);
 
-  return <AuthenticationContext.Provider value={{ authUser, setAuthUser }}>{props.children}</AuthenticationContext.Provider>
+  const updateAuthUser = () => {
+    userInfoQuery.get(`${Config.API_URL}/users/info`, { headers: { Authorization: `Bearer ${localStorage.getItem(LocalStorageKey.ACCESS_TOKEN)}` } });
+  }
+
+  return <AuthenticationContext.Provider value={{ authUser, setAuthUser, updateAuthUser }}>{props.children}</AuthenticationContext.Provider>
 }

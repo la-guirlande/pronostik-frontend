@@ -2,5 +2,5 @@
  * Global configuration.
  */
  export enum Config {
-    API_URL = 'http://localhost'
+    API_URL = 'https://pronostik-backend.herokuapp.com'
 }

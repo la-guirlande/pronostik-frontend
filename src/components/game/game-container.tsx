@@ -26,7 +26,7 @@ export const GameContainer: React.FC = () => {
   })
   return (
     <>
-      <TrackList tracks={game.tracks} />
+      <TrackList tracks={game?.tracks} />
     </>
   )
 }

@@ -50,14 +50,21 @@ export interface UserResponse extends Response {
 }
 
 /**
- * Refresh token response.
+ * Access token response.
  * 
- * Returned by `POST /auth/refreshToken`
+ * Returned by `POST /auth/accessToken`
  */
 export interface AccessTokenResponse extends Response {
   refresh_token: string;
   access_token: string;
 }
+
+/**
+ * Refresh token response.
+ * 
+ * Returned by `POST /auth/refreshToken`
+ */
+ export interface RefreshTokenResponse extends AccessTokenResponse {}
 
 /**
  * Game response.
