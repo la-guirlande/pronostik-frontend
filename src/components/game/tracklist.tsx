@@ -65,3 +65,5 @@ export const TrackList: React.FC<TrackListProps> = ({ tracks }) => {
     </section>
   )
 }
+
+TrackList.defaultProps = {tracks:[]}
