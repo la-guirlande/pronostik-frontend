@@ -1,11 +1,9 @@
-import React from 'react'
+import { FC } from 'react'
 
-function RegisterForm() {
+export const RegisterForm: FC = () => {
     return (
         <div>
-            
+            Register Page
         </div>
     )
 }
-
-export default RegisterForm
