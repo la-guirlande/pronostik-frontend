@@ -1,11 +1,12 @@
 import { useContext } from "react";
-import { GameTrack } from "../../util/types/data-types";
+import { GameData, GameTrack } from "../../util/types/data-types";
 import { AuthenticationContext } from "../contexts/authentication-context";
 
 interface TrackListProps {
-  tracks: GameTrack[];
+  game: GameData;
 }
-export const TrackList: React.FC<TrackListProps> = ({ tracks }) => {
+export const TrackList: React.FC<TrackListProps> = ({ game }) => {
+
   const { authUser } = useContext(AuthenticationContext);
 
   return (
@@ -18,14 +19,20 @@ export const TrackList: React.FC<TrackListProps> = ({ tracks }) => {
                 <th className="px-4 py-3">Nom</th>
                 <th className="px-4 py-3">Artiste</th>
                 <th className="px-4 py-3">Jouée</th>
-                <th className="px-4 py-3">Score</th>
+        
+                {
+                  
+                  game?.players.map((player, key) => (
+                    <th className="px-4 py-3" key={key}>{player.name}</th>
+                  ))
+                }
               </tr>
             </thead>
 
             <tbody className="bg-white">
-              {tracks ?
-                tracks.map((track: GameTrack, key) => (
-                  <tr className="text-gray-700">
+              {game?.tracks ?
+                game?.tracks.map((track: GameTrack, key) => (
+                  <tr className="text-gray-700" key={key}>
                     <td className="px-4 py-3 border">
                       <div className="flex items-center text-sm">
                         <div className="relative w-8 h-8 mr-3 rounded-full md:block">
@@ -34,25 +41,25 @@ export const TrackList: React.FC<TrackListProps> = ({ tracks }) => {
                         </div>
                         <div>
                           <p className="font-semibold text-black">{track.name}</p>
-                          <p className="text-xs text-gray-600">{track.artists}</p>
                         </div>
                       </div>
                     </td>
-                    <td className="px-4 py-3 text-ms font-semibold border">420</td>
-                    <td className="px-4 py-3 text-xs border">
-                      <span className="px-2 py-1 font-semibold leading-tight text-green-700 bg-green-100 rounded-sm"> {track.played} </span>
+                    <td className="px-4 py-3 text-ms font-semibold border">{track.artists.join(', ')}</td>
+                    <td className="px-4 py-3 text-xs border text-center">
+                      <span className={`w-12 px-2 py-1 font-semibold leading-tight ${track.played ? 'bg-green-700' : 'bg-red-700 '} rounded-sm`} ></span>
                     </td>
 
-                    {track.scores.map((score, key) => (
-                      <td className="px-4 py-3 text-sm border">
-                        {score && score.player === authUser ?
-                          <></>
-                          :
-                          <></>
-                        }
-                      </td>
-                    ))}
+                    {
 
+                      game?.players.map((player, key) => {
+                        const currentScore = track.scores.find(score => score.player.id === player.id)
+                        return currentScore ? <td className="px-4 py-3 text-sm border " key={key}>
+                        {
+                          <span>{currentScore.score}</span>
+                        }
+                      </td> : <td className="px-4 py-3 text-sm border" key={key}></td>
+                      })
+                    }
                   </tr>
                 )) :
                 <></>
@@ -66,4 +73,4 @@ export const TrackList: React.FC<TrackListProps> = ({ tracks }) => {
   )
 }
 
-TrackList.defaultProps = {tracks:[]}
+TrackList.defaultProps = {}

@@ -64,7 +64,7 @@ export const GameContainer: React.FC = () => {
           </div>
           <div className="h-full mt-36 w-full self-center">
             {
-              getGameQuery.response?.game ? <TrackList tracks={game?.tracks} />
+              game ? <TrackList game={game} />
                                 : <GameLobby onSubmit={handleCreateGame}/>
             }
            
