@@ -9,7 +9,7 @@ export const TrackList: React.FC<TrackListProps> = ({ tracks }) => {
   const { authUser } = useContext(AuthenticationContext);
 
   return (
-    <section className="container mx-auto p-6 font-mono">
+    <section className=" w-full p-6 font-mono">
       <div className="w-full mb-8 overflow-hidden rounded-lg shadow-lg">
         <div className="w-full overflow-x-auto">
           <table className="w-full">
