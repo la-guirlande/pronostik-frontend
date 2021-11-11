@@ -24,7 +24,7 @@ export const TrackList: React.FC<TrackListProps> = ({ game }) => {
         <div className="w-full overflow-x-auto rounded-lg shadow-lg">
           <table className="w-full">
             <thead>
-              <tr className="text-md font-semibold tracking-wide text-left text-gray-900 bg-gray-100 uppercase border-b border-gray-600">
+              <tr className="text-md font-semibold tracking-wide  text-gray-900 bg-gray-100 uppercase border-b border-gray-600 text-center">
                 <th className="px-4 py-3">Nom</th>
                 <th className="px-4 py-3">Artiste</th>
                 <th className="px-4 py-3">Jouée</th>
