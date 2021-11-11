@@ -43,3 +43,12 @@ export interface GameTrackScore {
   player: UserData;
   score: number;
 }
+
+export interface GameScoreboard {
+  gameId: string;
+  board: {
+    player: UserData;
+    score: number;
+    position?: number;
+  }[];
+}

@@ -74,3 +74,17 @@ export interface AccessTokenResponse extends Response {
 export interface GameResponse extends Response {
   game: GameData;
 }
+
+/**
+ * Game scoreboard response.
+ * 
+ * Returned by `GET /game/:id/scoreboard`
+ */
+ export interface GameScoreboardResponse extends Response{
+  gameId: string;
+  board: {
+    player: UserData;
+    score: number;
+    position?: number;
+  }[];
+}
