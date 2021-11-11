@@ -3,15 +3,34 @@ import { Status, useQuery } from "../../hooks/query-hook";
 import { Config } from "../../util/config";
 import { LocalStorageKey } from "../../util/local-storage";
 import { GameData } from "../../util/types/data-types";
-import { GameResponse } from "../../util/types/response-types";
+import { GameResponse, GamesResponse } from "../../util/types/response-types";
 import { GameLobby } from "./game-lobby";
 import { TrackList } from "./tracklist";
 
 export const GameContainer: React.FC = () => {
   const [game, setGame] = useState<GameData>();
+  const [games, setGames] = useState<GameData[]>();
+  const [showGame, setShowGame] = useState(false);
   const [gameId, setGameId] = useState<string>("");
   const getGameQuery = useQuery<GameResponse>();
+  const getGamesQuery = useQuery<GamesResponse>();
   const createGameQuery = useQuery<GameResponse>();
+
+  useEffect(() => {
+    switch (getGamesQuery.status) {
+      case Status.INIT:
+        getGamesQuery.get(`${Config.API_URL}/games`);
+        break;
+      case Status.SUCCESS:
+        setGames(getGamesQuery.response.games);
+        console.log("hhh", getGamesQuery.response.games);
+        break;
+      case Status.ERROR:
+        console.error(getGamesQuery.errorResponse.errors);
+        break;
+      default: break;
+    }
+  }, [getGamesQuery.status])
 
   useEffect(() => {
     switch (getGameQuery.status) {
@@ -61,11 +80,15 @@ export const GameContainer: React.FC = () => {
             <span className="font-light  font-montserrat text-4xl text-gray-700">
               Pronostik
             </span>
+            
           </div>
           <div className="h-full mt-36 w-full self-center">
+          <button className="font-montserrat font-light" onClick={() => setShowGame(!showGame)}>
+              Toggle
+            </button>
             {
-              game ? <TrackList game={game} />
-                                : <GameLobby onSubmit={handleCreateGame}/>
+              game && games && showGame ? <TrackList game={game} />
+              : <GameLobby onSubmit={handleCreateGame} games={games}/>
             }
            
           </div>

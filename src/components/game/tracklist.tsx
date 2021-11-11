@@ -11,8 +11,17 @@ export const TrackList: React.FC<TrackListProps> = ({ game }) => {
 
   return (
     <section className=" w-full p-6 font-mono">
-      <div className="w-full mb-8 overflow-hidden rounded-lg shadow-lg">
-        <div className="w-full overflow-x-auto">
+      <div className="w-full mb-8 overflow-hidden ">
+        <div className="font-montserrat text-2xl text-center my-8 ">
+          <span className="border-b-2 border-gray-700">Votre partie en cours</span>
+        </div>
+        <div className="font-montserrat text-xl text-center mb-1 font-bold">
+          <span>{game.name}</span>
+        </div>
+        <div className="font-montserrat text-xl text-center mb-16 text-gray-600">
+          <span>{game.description}</span>
+        </div>
+        <div className="w-full overflow-x-auto rounded-lg shadow-lg">
           <table className="w-full">
             <thead>
               <tr className="text-md font-semibold tracking-wide text-left text-gray-900 bg-gray-100 uppercase border-b border-gray-600">

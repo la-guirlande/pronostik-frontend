@@ -76,6 +76,15 @@ export interface GameResponse extends Response {
 }
 
 /**
+ * Games response.
+ * 
+ * Returned by `GET /games`
+ */
+export interface GamesResponse extends Response {
+  games: GameData[];
+}
+
+/**
  * Game scoreboard response.
  * 
  * Returned by `GET /game/:id/scoreboard`
