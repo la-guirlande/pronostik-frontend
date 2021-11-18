@@ -7,10 +7,7 @@ export interface IGameLobbyProps{
   games: GameData[]
 }
 
-export const GameLobby: FC<IGameLobbyProps> = ({onSubmit, games}) => {
-
-  console.log('fff', games)
-  return (
+export const GameLobby: FC<IGameLobbyProps> = ({onSubmit, games}) => (
     <div className="flex flex-row justify-center">
       <div className="flex flex-col justify-start">
         <div className="font-montserrat text-2xl text-center my-6">
@@ -18,9 +15,8 @@ export const GameLobby: FC<IGameLobbyProps> = ({onSubmit, games}) => {
         </div>
         <div className="w-full flex flex-row justify-center">
           {
-            games?.map((game, key) => {
-              return <GameCard key={key} name={game.name} description={game.description} players={game.players} tracks={game.tracks} id={game.id} />
-            })
+            games?.map((game, key) => <GameCard key={key} name={game.name} description={game.description} players={game.players} tracks={game.tracks} id={game.id} />
+            )
           }
         </div>
         <button className="mt-3 text-lg font-normal
@@ -32,4 +28,3 @@ export const GameLobby: FC<IGameLobbyProps> = ({onSubmit, games}) => {
       </div>
     </div>
   )
-}

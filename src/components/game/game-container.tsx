@@ -23,7 +23,6 @@ export const GameContainer: React.FC = () => {
         break;
       case Status.SUCCESS:
         setGames(getGamesQuery.response.games);
-        console.log("hhh", getGamesQuery.response.games);
         break;
       case Status.ERROR:
         console.error(getGamesQuery.errorResponse.errors);
@@ -39,7 +38,6 @@ export const GameContainer: React.FC = () => {
         break;
       case Status.SUCCESS:
         setGame(getGameQuery.response.game);
-        console.log(getGameQuery.response.game);
         break;
       case Status.ERROR:
         console.error(getGameQuery.errorResponse.errors);
