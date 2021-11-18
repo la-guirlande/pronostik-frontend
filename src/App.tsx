@@ -1,17 +1,16 @@
 import React from 'react';
-import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import { BrowserRouter } from 'react-router-dom';
 import { AuthenticationContextProvider } from './components/contexts/authentication-context';
-import { AuthenticationPage } from './pages/authentication-page';
-import { HomePage } from './pages/home-page';
+import { GameContextProvider } from './components/contexts/game-context';
 import { Router } from './router';
 
 const App: React.FC = () => (
   <AuthenticationContextProvider>
-    {/* <WebsocketProvider> */}
-    <BrowserRouter>
-      <Router />
-    </BrowserRouter>
-    {/* </WebsocketProvider> */}
+    <GameContextProvider>
+      <BrowserRouter>
+        <Router />
+      </BrowserRouter>
+    </GameContextProvider>
   </AuthenticationContextProvider>
 
 )
