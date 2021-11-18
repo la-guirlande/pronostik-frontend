@@ -40,9 +40,9 @@ export const GameContextProvider: React.FC = (props) => {
 
   const updateCurrentGame = (gameId?: string) => {
     if (gameId != null) {
-      gameQuery.get(`${Config.API_URL}/games/${gameId}`, { headers: { Authorization: `Bearer ${localStorage.getItem(LocalStorageKey.ACCESS_TOKEN)}` } });
+      gameQuery.get(`${Config.API_URL}/games/${gameId}`);
     } else if (currentGame != null) {
-      gameQuery.get(`${Config.API_URL}/games/${currentGame.id}`, { headers: { Authorization: `Bearer ${localStorage.getItem(LocalStorageKey.ACCESS_TOKEN)}` } });
+      gameQuery.get(`${Config.API_URL}/games/${currentGame.id}`);
     } else {
       console.warn('Could not update current game because there is not defined current game');
     }
