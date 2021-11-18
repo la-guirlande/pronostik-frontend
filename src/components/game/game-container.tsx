@@ -1,32 +1,98 @@
 import { useEffect, useState } from "react";
 import { Status, useQuery } from "../../hooks/query-hook";
 import { Config } from "../../util/config";
+import { LocalStorageKey } from "../../util/local-storage";
 import { GameData } from "../../util/types/data-types";
-import { GameResponse } from "../../util/types/response-types";
+import { GameResponse, GamesResponse } from "../../util/types/response-types";
+import { GameLobby } from "./game-lobby";
 import { TrackList } from "./tracklist";
 
 export const GameContainer: React.FC = () => {
   const [game, setGame] = useState<GameData>();
-  const gameQuery = useQuery<GameResponse>();
+  const [games, setGames] = useState<GameData[]>();
+  const [showGame, setShowGame] = useState(false);
+  const [gameId, setGameId] = useState<string>("");
+  const getGameQuery = useQuery<GameResponse>();
+  const getGamesQuery = useQuery<GamesResponse>();
+  const createGameQuery = useQuery<GameResponse>();
 
   useEffect(() => {
-    switch (gameQuery.status) {
+    switch (getGamesQuery.status) {
       case Status.INIT:
-        gameQuery.get(`${Config.API_URL}/game`)
+        getGamesQuery.get(`${Config.API_URL}/games`);
         break;
       case Status.SUCCESS:
-        setGame(gameQuery.response.game);
-        console.log(gameQuery.response.game);
+        setGames(getGamesQuery.response.games);
         break;
       case Status.ERROR:
-        console.error(gameQuery.errorResponse.errors);
+        console.error(getGamesQuery.errorResponse.errors);
         break;
       default: break;
     }
-  })
+  }, [getGamesQuery.status])
+
+  useEffect(() => {
+    switch (getGameQuery.status) {
+      case Status.INIT:
+        getGameQuery.get(`${Config.API_URL}/games/${localStorage.getItem(LocalStorageKey.GAME_ID)}`);
+        break;
+      case Status.SUCCESS:
+        setGame(getGameQuery.response.game);
+        break;
+      case Status.ERROR:
+        console.error(getGameQuery.errorResponse.errors);
+        break;
+      default: break;
+    }
+  }, [getGameQuery.status]);
+
+  useEffect(() => {
+    switch (createGameQuery.status) {
+      case Status.SUCCESS:
+        setGameId(createGameQuery.response.game.id);
+        localStorage.setItem('game-id', createGameQuery.response.game.id);
+        break;
+      case Status.ERROR:
+        console.error(createGameQuery.errorResponse.errors);
+        break;
+      default: break;
+    }
+  }, [createGameQuery.status]);
+
+  const handleCreateGame = () => {
+    createGameQuery.post(`${Config.API_URL}/games`,{
+      name: 'Ce cône',
+      description: 'J\'espère qu\'il va pas passer le son de merde (celui que Otah a remixé après)'
+    }, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem(LocalStorageKey.ACCESS_TOKEN)}`
+      }
+    })
+  };
+
   return (
     <>
-      <TrackList tracks={game?.tracks} />
+      <div className="flex flex-row justify-center h-screen w-full">
+        <div className="flex flex-col justify-start w-full">
+          <div className="text-center self-center mt-12">
+            <span className="font-light  font-montserrat text-4xl text-gray-700">
+              Pronostik
+            </span>
+            
+          </div>
+          <div className="h-full mt-36 w-full self-center">
+          <button className="font-montserrat font-light" onClick={() => setShowGame(!showGame)}>
+              Toggle
+            </button>
+            {
+              game && games && showGame ? <TrackList game={game} />
+              : <GameLobby onSubmit={handleCreateGame} games={games}/>
+            }
+           
+          </div>
+
+        </div>
+      </div>
     </>
   )
 }
