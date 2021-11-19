@@ -12,6 +12,7 @@ export const TrackList: React.FC = () => {
   const { authUser } = useContext(AuthenticationContext);
   const { currentGame, updateCurrentGame } = useContext(GameContext);
   const pronosticRegisterQuery = useQuery<CreationResponse>();
+  const playedTrackQuery = useQuery<CreationResponse>();
 
   useEffect(() => {
     switch (pronosticRegisterQuery.status) {
@@ -24,10 +25,25 @@ export const TrackList: React.FC = () => {
     }
   }, [pronosticRegisterQuery.status]);
 
+  useEffect(() => {
+    switch (playedTrackQuery.status) {
+      case Status.SUCCESS:
+        updateCurrentGame();
+        break;
+      case Status.ERROR:
+        console.error(playedTrackQuery.errorResponse.errors);
+        break;
+    }
+  }, [playedTrackQuery.status]);
+
   const handlePronosticRegister = (track: GameTrack, { score }: PronosticFormData) => {
     pronosticRegisterQuery.put(`${Config.API_URL}/games/${currentGame.id}/tracks/${track.id}/score`, { score }, {
       headers: { Authorization: `Bearer ${localStorage.getItem(LocalStorageKey.ACCESS_TOKEN)}` }
     });
+  }
+
+  const handleTrackPlayed = (track: GameTrack) => {
+    playedTrackQuery.put(`${Config.API_URL}/games/${currentGame.id}/tracks/${track.id}/played`);
   }
 
   return (
@@ -76,7 +92,7 @@ export const TrackList: React.FC = () => {
                     </td>
                     <td className="px-4 py-3 text-ms font-semibold border">{track.artists.join(', ')}</td>
                     <td className="px-4 py-3 text-xs border text-center">
-                      <span className={`w-12 px-2 py-1 font-semibold leading-tight ${track.played ? 'bg-green-700' : 'bg-red-700 '} rounded-sm`} ></span>
+                      <button className={`p-4 rounded-lg ${track.played ? 'bg-green-700' : 'bg-red-700 '} rounded-sm`} onClick={() => handleTrackPlayed(track)} ></button>
                     </td>
 
                     {
