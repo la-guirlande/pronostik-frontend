@@ -52,7 +52,7 @@ export const TrackList: React.FC = () => {
 
   const filteredTracks = useMemo(() => {
     return currentGame.tracks.filter(track => track.name.toLowerCase().includes(filter.toLowerCase()));
-  }, [filter]);
+  }, [filter, currentGame.tracks]);
 
   const handleAddTrack = ({ name, artists }: AddTrackFormData) => {
     addTrackQuery.post(`${Config.API_URL}/games/${currentGame.id}/tracks`, { name, artists: artists.map(artist => artist.name) });
