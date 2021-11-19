@@ -20,7 +20,7 @@ export const Router: FC = () => {
       </Routes>
     </div>
   }else {
-    return <div className="md:flex flex-col md:flex-row md:min-h-screen w-screen">
+    return <div className="lg:flex flex-col md:flex-row lg:min-h-screen w-screen">
       <Sidebar /> 
       <Routes>
           

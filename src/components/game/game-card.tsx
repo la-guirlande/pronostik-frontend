@@ -3,8 +3,8 @@ import { GameData } from '../../util/types/data-types'
 
 export const GameCard: FC<GameData> = ({name, description}) => {
     
-    return (<div className="mx-6 bg-gray-100 flex justify-center items-center">
-            <div className="container w-80 mx-auto  bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-2xl transform hover:scale-105 duration-500">
+    return (<div className="mx-6 my-6 bg-gray-100 flex justify-center items-center lg:w-72">
+            <div className="container mx-auto  bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-2xl transform hover:scale-105 duration-500">
             <img className="w-full" src="https://i.ytimg.com/vi/SU2PTRY7HUE/maxresdefault.jpg" alt="" />
             <div className="text-center relative py-14">
                 <span className="absolute transform -translate-x-10 -translate-y-24 z-50 text-green-500 bg-white rounded-full hover:text-green-400 transition-all duration-200 cursor-pointer">
