@@ -74,7 +74,7 @@ export const GameContainer: React.FC = () => {
               <button className="font-montserrat font-light" onClick={handleShowUserGames}>
                 Vos parties en cours
               </button>
-              <TrackList game={currentGame} />
+              <TrackList />
             </div>
           ) : (
             <div>
