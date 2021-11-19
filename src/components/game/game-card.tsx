@@ -10,7 +10,7 @@ export const GameCard: FC<GameCardProps> = ({ game, onClick }) => {
     
     return (<div className="mx-6 bg-gray-100 flex justify-center items-center">
             <div className="container w-80 mx-auto  bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-2xl transform hover:scale-105 duration-500">
-            <img className="w-full" src="https://i.ytimg.com/vi/SU2PTRY7HUE/maxresdefault.jpg" alt="" />
+            <img className="w-full" src={game.image} alt="" />
             <div className="text-center relative py-14">
                 <button className="absolute transform -translate-x-10 -translate-y-24 z-50 text-green-500 bg-white rounded-full hover:text-green-400 transition-all duration-200 cursor-pointer" onClick={onClick}>
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-20 w-20" viewBox="0 0 20 20" fill="currentColor">

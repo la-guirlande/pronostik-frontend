@@ -5,6 +5,7 @@ import { Sidebar } from './components/sidebar/sidebar'
 import { AuthenticationPage } from './pages/authentication-page'
 import { GamePage } from './pages/game-page'
 import { HomePage } from './pages/home-page'
+import { JoinGamePage } from './pages/join-game-page'
 
 export const Router: FC = () => {
   const { authUser } = useContext(AuthenticationContext);
@@ -13,7 +14,7 @@ export const Router: FC = () => {
     return (
       <div className="md:flex flex-col md:flex-row md:min-h-screen w-screen">
         <Routes>
-            <Route path='/' element={<AuthenticationPage />} />
+            <Route path='*' element={<AuthenticationPage />} />
         </Routes>
       </div>
     );
@@ -24,6 +25,7 @@ export const Router: FC = () => {
         <Routes>
           <Route path='*' element={<HomePage />} />
           <Route path='play' element={<GamePage />} />
+          <Route path='find' element={<JoinGamePage />} />
           <Route path='account' element={<HomePage />} />
           <Route path='contact' element={<HomePage />} />
         </Routes>
