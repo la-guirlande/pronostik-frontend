@@ -1,13 +1,50 @@
-import { useContext } from "react";
-import { GameData, GameTrack } from "../../util/types/data-types";
+import { useContext, useEffect } from "react";
+import { Status, useQuery } from '../../hooks/query-hook';
+import { Config } from '../../util/config';
+import { LocalStorageKey } from '../../util/local-storage';
+import { GameTrack } from "../../util/types/data-types";
+import { CreationResponse } from '../../util/types/response-types';
 import { AuthenticationContext } from "../contexts/authentication-context";
+import { GameContext } from '../contexts/game-context';
+import { PronosticForm, PronosticFormData } from './pronostic-form';
 
-interface TrackListProps {
-  game: GameData;
-}
-export const TrackList: React.FC<TrackListProps> = ({ game }) => {
-
+export const TrackList: React.FC = () => {
   const { authUser } = useContext(AuthenticationContext);
+  const { currentGame, updateCurrentGame } = useContext(GameContext);
+  const pronosticRegisterQuery = useQuery<CreationResponse>();
+  const playedTrackQuery = useQuery<CreationResponse>();
+
+  useEffect(() => {
+    switch (pronosticRegisterQuery.status) {
+      case Status.SUCCESS:
+        updateCurrentGame();
+        break;
+      case Status.ERROR:
+        console.error(pronosticRegisterQuery.errorResponse.errors);
+        break;
+    }
+  }, [pronosticRegisterQuery.status]);
+
+  useEffect(() => {
+    switch (playedTrackQuery.status) {
+      case Status.SUCCESS:
+        updateCurrentGame();
+        break;
+      case Status.ERROR:
+        console.error(playedTrackQuery.errorResponse.errors);
+        break;
+    }
+  }, [playedTrackQuery.status]);
+
+  const handlePronosticRegister = (track: GameTrack, { score }: PronosticFormData) => {
+    pronosticRegisterQuery.put(`${Config.API_URL}/games/${currentGame.id}/tracks/${track.id}/score`, { score }, {
+      headers: { Authorization: `Bearer ${localStorage.getItem(LocalStorageKey.ACCESS_TOKEN)}` }
+    });
+  }
+
+  const handleTrackPlayed = (track: GameTrack) => {
+    playedTrackQuery.put(`${Config.API_URL}/games/${currentGame.id}/tracks/${track.id}/played`);
+  }
 
   return (
     <section className=" w-full p-6 font-mono">
@@ -16,10 +53,10 @@ export const TrackList: React.FC<TrackListProps> = ({ game }) => {
           <span className="border-b-2 border-gray-700">Votre partie en cours</span>
         </div>
         <div className="font-montserrat text-xl text-center mb-1 font-bold">
-          <span>{game.name}</span>
+          <span>{currentGame.name}</span>
         </div>
         <div className="font-montserrat text-xl text-center mb-16 text-gray-600">
-          <span>{game.description}</span>
+          <span>{currentGame.description}</span>
         </div>
         <div className="w-full overflow-x-auto rounded-lg shadow-lg">
           <table className="w-full">
@@ -31,7 +68,7 @@ export const TrackList: React.FC<TrackListProps> = ({ game }) => {
         
                 {
                   
-                  game?.players.map((player, key) => (
+                  currentGame?.players.map((player, key) => (
                     <th className="px-4 py-3" key={key}>{player.name}</th>
                   ))
                 }
@@ -39,8 +76,8 @@ export const TrackList: React.FC<TrackListProps> = ({ game }) => {
             </thead>
 
             <tbody className="bg-white">
-              {game?.tracks ?
-                game?.tracks.map((track: GameTrack, key) => (
+              {currentGame?.tracks ?
+                currentGame?.tracks.map((track: GameTrack, key) => (
                   <tr className="text-gray-700" key={key}>
                     <td className="px-4 py-3 border">
                       <div className="flex items-center text-sm">
@@ -55,18 +92,26 @@ export const TrackList: React.FC<TrackListProps> = ({ game }) => {
                     </td>
                     <td className="px-4 py-3 text-ms font-semibold border">{track.artists.join(', ')}</td>
                     <td className="px-4 py-3 text-xs border text-center">
-                      <span className={`w-12 px-2 py-1 font-semibold leading-tight ${track.played ? 'bg-green-700' : 'bg-red-700 '} rounded-sm`} ></span>
+                      <button className={`p-4 rounded-lg ${track.played ? 'bg-green-700' : 'bg-red-700 '} rounded-sm`} onClick={() => handleTrackPlayed(track)} ></button>
                     </td>
 
                     {
 
-                      game?.players.map((player, key) => {
+                      currentGame?.players.map((player, key) => {
                         const currentScore = track.scores.find(score => score.player.id === player.id)
-                        return currentScore ? <td className="px-4 py-3 text-sm border " key={key}>
-                        {
-                          <span>{currentScore.score}</span>
-                        }
-                      </td> : <td className="px-4 py-3 text-sm border" key={key}></td>
+                        return currentScore ? (
+                          <td className="px-4 py-3 text-sm border " key={key}>
+                            <span>{currentScore.score}</span>
+                          </td>
+                        ) : (
+                            <td className="px-4 py-3 text-sm border" key={key}>
+                              {player.id === authUser.id ? (
+                                <PronosticForm onSubmit={(data) => handlePronosticRegister(track, data)} />
+                              ) : (
+                                <span>•</span>
+                              )}
+                            </td>
+                        );
                       })
                     }
                   </tr>

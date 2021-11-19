@@ -1,4 +1,5 @@
 import { useContext, useEffect, useState } from "react";
+import { Link } from 'react-router-dom';
 import { Status, useQuery } from "../../hooks/query-hook";
 import { Config } from "../../util/config";
 import { LocalStorageKey } from "../../util/local-storage";
@@ -6,6 +7,7 @@ import { GameData } from "../../util/types/data-types";
 import { CreationResponse, GamesResponse } from "../../util/types/response-types";
 import { AuthenticationContext } from '../contexts/authentication-context';
 import { GameContext } from '../contexts/game-context';
+import { CreateGameForm, CreateGameFormData } from './create-game-form';
 import { GameLobby } from "./game-lobby";
 import { TrackList } from "./tracklist";
 
@@ -41,11 +43,8 @@ export const GameContainer: React.FC = () => {
     }
   }, [createGameQuery.status]);
 
-  const handleCreateGame = () => {
-    createGameQuery.post(`${Config.API_URL}/games`, {
-      name: 'Ce cône',
-      description: 'J\'espère qu\'il va pas passer le son de merde (celui que Otah a remixé après)'
-    }, {
+  const handleCreateGame = ({ name, description, image }: CreateGameFormData) => {
+    createGameQuery.post(`${Config.API_URL}/games`, { name, description, image }, {
       headers: {
         Authorization: `Bearer ${localStorage.getItem(LocalStorageKey.ACCESS_TOKEN)}`
       }
@@ -75,11 +74,20 @@ export const GameContainer: React.FC = () => {
               <button className="font-montserrat font-light" onClick={handleShowUserGames}>
                 Vos parties en cours
               </button>
-              <TrackList game={currentGame} />
+              <TrackList />
             </div>
-          ) :
-            <GameLobby onSubmit={handleCreateGame} games={userGames} onGameSelect={handleGameSelect} />
-          }
+          ) : (
+            <div>
+              <div className="flex justify-between">
+                <CreateGameForm onSubmit={handleCreateGame} />
+                OU
+                <Link className="mt-3 text-lg font-normal bg-gray-800 w-34 text-white rounded-sm px-6 py-3 block shadow-xl font-montserrat" to="/find">
+                    Trouver une partie
+                </Link>
+              </div>
+              <GameLobby games={userGames} onGameSelect={handleGameSelect} />
+            </div>
+          )}
           </div>
         </div>
       </div>
