@@ -4,6 +4,7 @@ import { useForm } from 'react-hook-form';
 export interface CreateGameFormData {
   name: string;
   description: string;
+  image: string;
 }
 
 export interface CreateGameFormProps {
@@ -11,7 +12,7 @@ export interface CreateGameFormProps {
 }
 
 export const CreateGameForm: FC<CreateGameFormProps> = ({ onSubmit }) => {
-  const { register, handleSubmit, formState: { errors } } = useForm<CreateGameFormData>({ defaultValues: { name: null, description: null } });
+  const { register, handleSubmit, formState: { errors } } = useForm<CreateGameFormData>({ defaultValues: { name: null, description: null, image: null } });
 
   return (
     <div className="container max-w-full mx-auto md:py-24 px-6">
@@ -23,18 +24,25 @@ export const CreateGameForm: FC<CreateGameFormProps> = ({ onSubmit }) => {
                 onSubmit={handleSubmit((data) => onSubmit(data))}>
                 <div className="mx-auto max-w-lg ">
                   <div className="py-1">
-                    <span className="px-1 text-sm text-gray-600">Nom de la partie</span>
+                    <span className="px-1 text-sm text-gray-600">Nom de la partie*</span>
                     <input placeholder="" type="text"
                       className="text-md block px-3 py-2 rounded-lg w-full
                               bg-white border-2 border-gray-300 placeholder-gray-600 shadow-md focus: focus: focus: focus: outline-none"
                       {...register('name', { required: true })} />
                   </div>
                   <div className="py-1">
-                    <span className="px-1 text-sm text-gray-600">Description (optionnel)</span>
+                    <span className="px-1 text-sm text-gray-600">Description</span>
                     <textarea placeholder=""
                       className="text-md block px-3 py-2 rounded-lg w-full
                               bg-white border-2 border-gray-300 placeholder-gray-600 shadow-md focus: focus: focus: focus: outline-none"
                       {...register('description')} />
+                  </div>
+                  <div className="py-1">
+                    <span className="px-1 text-sm text-gray-600">Image de couverture*</span>
+                    <input placeholder="" type="text"
+                      className="text-md block px-3 py-2 rounded-lg w-full
+                              bg-white border-2 border-gray-300 placeholder-gray-600 shadow-md focus: focus: focus: focus: outline-none"
+                      {...register('image')} />
                   </div>
                 </div>
                 <button type="submit" className="mt-3 text-lg font-semibold

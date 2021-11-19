@@ -26,8 +26,9 @@ export interface UserData extends BaseData {
 }
 
 export interface GameData extends BaseData {
-  name?: string;
+  name: string;
   description?: string;
+  image: string;
   players: UserData[];
   tracks: GameTrack[];
 }
