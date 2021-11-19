@@ -10,6 +10,7 @@ import { GameResponse } from '../../util/types/response-types';
 export type GameContextState = {
   currentGame: GameData;
   updateCurrentGame(gameId?: string): void;
+  resetCurrentGame(): void;
 }
 
 /**
@@ -17,7 +18,7 @@ export type GameContextState = {
  * 
  * This context is used to manipulate the current game.
  */
-export const GameContext = React.createContext<GameContextState>({ currentGame: null, updateCurrentGame: null });
+export const GameContext = React.createContext<GameContextState>({ currentGame: null, updateCurrentGame: null, resetCurrentGame: null });
 
 /**
  * Game context provider.
@@ -47,5 +48,9 @@ export const GameContextProvider: React.FC = (props) => {
     }
   }
 
-  return <GameContext.Provider value={{ currentGame, updateCurrentGame }}>{props.children}</GameContext.Provider>
+  const resetCurrentGame = () => {
+    setCurrentGame(null);
+  }
+
+  return <GameContext.Provider value={{ currentGame, updateCurrentGame, resetCurrentGame }}>{props.children}</GameContext.Provider>
 }

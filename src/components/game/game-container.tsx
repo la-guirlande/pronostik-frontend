@@ -11,9 +11,8 @@ import { TrackList } from "./tracklist";
 
 export const GameContainer: React.FC = () => {
   const { authUser } = useContext(AuthenticationContext);
-  const { currentGame, updateCurrentGame } = useContext(GameContext);
+  const { currentGame, updateCurrentGame, resetCurrentGame } = useContext(GameContext);
   const [userGames, setUserGames] = useState<GameData[]>([]);
-  const [showGame, setShowGame] = useState(false);
   const userGamesQuery = useQuery<GamesResponse>();
   const createGameQuery = useQuery<CreationResponse>();
 
@@ -57,6 +56,10 @@ export const GameContainer: React.FC = () => {
     updateCurrentGame(game.id);
   }
 
+  const handleShowUserGames = () => {
+    resetCurrentGame();
+  }
+
   return (
     <>
       <div className="flex flex-row justify-center h-screen w-full">
@@ -65,19 +68,19 @@ export const GameContainer: React.FC = () => {
             <span className="font-light  font-montserrat text-4xl text-gray-700">
               Pronostik
             </span>
-            
           </div>
           <div className="h-full mt-36 w-full self-center">
-          <button className="font-montserrat font-light" onClick={() => setShowGame(!showGame)}>
-              Toggle
-            </button>
-            {
-              currentGame && showGame ? <TrackList game={currentGame} />
-              : <GameLobby onSubmit={handleCreateGame} games={userGames} onGameSelect={handleGameSelect} />
-            }
-           
+          {currentGame ? (
+            <div>
+              <button className="font-montserrat font-light" onClick={handleShowUserGames}>
+                Vos parties en cours
+              </button>
+              <TrackList game={currentGame} />
+            </div>
+          ) :
+            <GameLobby onSubmit={handleCreateGame} games={userGames} onGameSelect={handleGameSelect} />
+          }
           </div>
-
         </div>
       </div>
     </>
