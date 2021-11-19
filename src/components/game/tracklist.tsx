@@ -6,13 +6,26 @@ import { GameTrack } from "../../util/types/data-types";
 import { CreationResponse } from '../../util/types/response-types';
 import { AuthenticationContext } from "../contexts/authentication-context";
 import { GameContext } from '../contexts/game-context';
+import { AddTrackForm, AddTrackFormData } from './add-track-form';
 import { PronosticForm, PronosticFormData } from './pronostic-form';
 
 export const TrackList: React.FC = () => {
   const { authUser } = useContext(AuthenticationContext);
   const { currentGame, updateCurrentGame } = useContext(GameContext);
+  const addTrackQuery = useQuery<CreationResponse>();
   const pronosticRegisterQuery = useQuery<CreationResponse>();
   const playedTrackQuery = useQuery<CreationResponse>();
+
+  useEffect(() => {
+    switch (addTrackQuery.status) {
+      case Status.SUCCESS:
+        updateCurrentGame();
+        break;
+      case Status.ERROR:
+        console.error(addTrackQuery.errorResponse.errors);
+        break;
+    }
+  }, [addTrackQuery.status]);
 
   useEffect(() => {
     switch (pronosticRegisterQuery.status) {
@@ -35,6 +48,10 @@ export const TrackList: React.FC = () => {
         break;
     }
   }, [playedTrackQuery.status]);
+
+  const handleAddTrack = ({ name, artists }: AddTrackFormData) => {
+    addTrackQuery.post(`${Config.API_URL}/games/${currentGame.id}/tracks`, { name, artists: artists.map(artist => artist.name) });
+  }
 
   const handlePronosticRegister = (track: GameTrack, { score }: PronosticFormData) => {
     pronosticRegisterQuery.put(`${Config.API_URL}/games/${currentGame.id}/tracks/${track.id}/score`, { score }, {
@@ -121,6 +138,7 @@ export const TrackList: React.FC = () => {
 
             </tbody>
           </table>
+          <AddTrackForm onSubmit={handleAddTrack} />
         </div>
       </div>
     </section>
