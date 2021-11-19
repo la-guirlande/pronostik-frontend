@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Status, useQuery } from '../../hooks/query-hook';
 import { Config } from '../../util/config';
-import { LocalStorageKey } from '../../util/local-storage';
 import { GameData } from '../../util/types/data-types';
 import { GameResponse } from '../../util/types/response-types';
 
