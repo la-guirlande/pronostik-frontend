@@ -16,9 +16,6 @@ export const GameScoreboard: FC<GameScoreboardProps> = ({ game }) => {
       case Status.INIT:
         scoreboardQuery.get(`${Config.API_URL}/games/${game.id}/scoreboard`);
         break;
-      case Status.SUCCESS:
-        console.log(scoreboardQuery.response.scoreboard);
-        break;
       case Status.ERROR:
         console.error(scoreboardQuery.errorResponse.errors);
         break;
