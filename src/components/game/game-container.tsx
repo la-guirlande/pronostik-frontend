@@ -7,6 +7,7 @@ import { GameData } from "../../util/types/data-types";
 import { CreationResponse, GamesResponse } from "../../util/types/response-types";
 import { AuthenticationContext } from '../contexts/authentication-context';
 import { GameContext } from '../contexts/game-context';
+import { CreateGameForm, CreateGameFormData } from './create-game-form';
 import { GameLobby } from "./game-lobby";
 import { TrackList } from "./tracklist";
 
@@ -42,11 +43,8 @@ export const GameContainer: React.FC = () => {
     }
   }, [createGameQuery.status]);
 
-  const handleCreateGame = () => {
-    createGameQuery.post(`${Config.API_URL}/games`, {
-      name: 'Ce cône',
-      description: 'J\'espère qu\'il va pas passer le son de merde (celui que Otah a remixé après)'
-    }, {
+  const handleCreateGame = ({ name, description }: CreateGameFormData) => {
+    createGameQuery.post(`${Config.API_URL}/games`, { name, description }, {
       headers: {
         Authorization: `Bearer ${localStorage.getItem(LocalStorageKey.ACCESS_TOKEN)}`
       }
@@ -80,12 +78,13 @@ export const GameContainer: React.FC = () => {
             </div>
           ) : (
             <div>
-              <button className="mt-3 text-lg font-normal bg-gray-800 w-34 text-white rounded-sm px-6 py-3 block shadow-xl font-montserrat" onClick={handleCreateGame}>
-                  Créer une partie 
-              </button>
-              <Link className="mt-3 text-lg font-normal bg-gray-800 w-34 text-white rounded-sm px-6 py-3 block shadow-xl font-montserrat" to="/find">
-                  Trouver une partie
-              </Link>
+              <div className="flex justify-between">
+                <CreateGameForm onSubmit={handleCreateGame} />
+                OU
+                <Link className="mt-3 text-lg font-normal bg-gray-800 w-34 text-white rounded-sm px-6 py-3 block shadow-xl font-montserrat" to="/find">
+                    Trouver une partie
+                </Link>
+              </div>
               <GameLobby games={userGames} onGameSelect={handleGameSelect} />
             </div>
           )}

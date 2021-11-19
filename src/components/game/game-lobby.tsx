@@ -15,11 +15,9 @@ export const GameLobby: FC<IGameLobbyProps> = ({ games, onGameSelect }) => (
         </div>
         <div className="w-full flex flex-row justify-center">
           {
-            games?.map((game, key) => <GameCard key={key} game={game} onClick={() => onGameSelect(game)} />
-            )
+            games?.map((game, key) => <GameCard key={key} game={game} onClick={() => onGameSelect(game)} />)
           }
         </div>
       </div>
     </div>
   );
-
