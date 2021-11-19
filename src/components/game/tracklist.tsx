@@ -1,4 +1,4 @@
-import { useContext, useEffect } from "react";
+import { ChangeEvent, useContext, useEffect, useMemo, useRef, useState } from "react";
 import { Status, useQuery } from '../../hooks/query-hook';
 import { Config } from '../../util/config';
 import { LocalStorageKey } from '../../util/local-storage';
@@ -15,6 +15,7 @@ export const TrackList: React.FC = () => {
   const addTrackQuery = useQuery<CreationResponse>();
   const pronosticRegisterQuery = useQuery<CreationResponse>();
   const playedTrackQuery = useQuery<CreationResponse>();
+  const [filter, setFilter] = useState<string>('');
 
   useEffect(() => {
     switch (addTrackQuery.status) {
@@ -49,6 +50,10 @@ export const TrackList: React.FC = () => {
     }
   }, [playedTrackQuery.status]);
 
+  const filteredTracks = useMemo(() => {
+    return currentGame.tracks.filter(track => track.name.toLowerCase().includes(filter.toLowerCase()));
+  }, [filter]);
+
   const handleAddTrack = ({ name, artists }: AddTrackFormData) => {
     addTrackQuery.post(`${Config.API_URL}/games/${currentGame.id}/tracks`, { name, artists: artists.map(artist => artist.name) });
   }
@@ -61,6 +66,10 @@ export const TrackList: React.FC = () => {
 
   const handleTrackPlayed = (track: GameTrack) => {
     playedTrackQuery.put(`${Config.API_URL}/games/${currentGame.id}/tracks/${track.id}/played`);
+  }
+
+  const handleFilter = (e: ChangeEvent<HTMLInputElement>) => {
+    setFilter(e.target.value);
   }
 
   return (
@@ -76,6 +85,7 @@ export const TrackList: React.FC = () => {
           <span>{currentGame.description}</span>
         </div>
         <div className="w-full overflow-x-auto rounded-lg shadow-lg">
+          <input placeholder="Filtrer..." onChange={handleFilter} />
           <table className="w-full">
             <thead>
               <tr className="text-md font-semibold tracking-wide  text-gray-900 bg-gray-100 uppercase border-b border-gray-600 text-center">
@@ -93,8 +103,16 @@ export const TrackList: React.FC = () => {
             </thead>
 
             <tbody className="bg-white">
-              {currentGame?.tracks ?
-                currentGame?.tracks.map((track: GameTrack, key) => (
+              {filteredTracks ?
+                filteredTracks.sort((a, b) => {
+                  if (a.name < b.name) {
+                    return -1;
+                  } else if (a.name > b.name) {
+                    return 1;
+                  } else {
+                    return 0;
+                  }
+                }).map((track: GameTrack, key) => (
                   <tr className="text-gray-700" key={key}>
                     <td className="px-4 py-3 border">
                       <div className="flex items-center text-sm">
