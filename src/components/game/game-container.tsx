@@ -9,6 +9,7 @@ import { AuthenticationContext } from '../contexts/authentication-context';
 import { GameContext } from '../contexts/game-context';
 import { CreateGameForm, CreateGameFormData } from './create-game-form';
 import { GameLobby } from "./game-lobby";
+import { GameScoreboard } from './game-scoreboard';
 import { TrackList } from "./tracklist";
 
 export const GameContainer: React.FC = () => {
@@ -75,6 +76,7 @@ export const GameContainer: React.FC = () => {
                 Vos parties en cours
               </button>
               <TrackList />
+              <GameScoreboard game={currentGame} />
             </div>
           ) : (
             <div>

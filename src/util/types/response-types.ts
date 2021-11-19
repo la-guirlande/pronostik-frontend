@@ -1,4 +1,4 @@
-import { ErrorData, GameData, UserData } from './data-types';
+import { ErrorData, GameData, GameScoreboard, UserData } from './data-types';
 /**
  * Base response.
  */
@@ -90,10 +90,5 @@ export interface GamesResponse extends Response {
  * Returned by `GET /game/:id/scoreboard`
  */
  export interface GameScoreboardResponse extends Response{
-  gameId: string;
-  board: {
-    player: UserData;
-    score: number;
-    position?: number;
-  }[];
+  scoreboard: GameScoreboard;
 }

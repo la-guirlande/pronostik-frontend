@@ -1,4 +1,4 @@
-import { useContext, useEffect } from "react";
+import { ChangeEvent, useContext, useEffect, useMemo, useState } from "react";
 import { Status, useQuery } from '../../hooks/query-hook';
 import { Config } from '../../util/config';
 import { LocalStorageKey } from '../../util/local-storage';
@@ -6,13 +6,27 @@ import { GameTrack } from "../../util/types/data-types";
 import { CreationResponse } from '../../util/types/response-types';
 import { AuthenticationContext } from "../contexts/authentication-context";
 import { GameContext } from '../contexts/game-context';
+import { AddTrackForm, AddTrackFormData } from './add-track-form';
 import { PronosticForm, PronosticFormData } from './pronostic-form';
 
 export const TrackList: React.FC = () => {
   const { authUser } = useContext(AuthenticationContext);
   const { currentGame, updateCurrentGame } = useContext(GameContext);
+  const addTrackQuery = useQuery<CreationResponse>();
   const pronosticRegisterQuery = useQuery<CreationResponse>();
   const playedTrackQuery = useQuery<CreationResponse>();
+  const [filter, setFilter] = useState<string>('');
+
+  useEffect(() => {
+    switch (addTrackQuery.status) {
+      case Status.SUCCESS:
+        updateCurrentGame();
+        break;
+      case Status.ERROR:
+        console.error(addTrackQuery.errorResponse.errors);
+        break;
+    }
+  }, [addTrackQuery.status]);
 
   useEffect(() => {
     switch (pronosticRegisterQuery.status) {
@@ -36,6 +50,14 @@ export const TrackList: React.FC = () => {
     }
   }, [playedTrackQuery.status]);
 
+  const filteredTracks = useMemo(() => {
+    return currentGame.tracks.filter(track => track.name.toLowerCase().includes(filter.toLowerCase()));
+  }, [filter, currentGame.tracks]);
+
+  const handleAddTrack = ({ name, artists }: AddTrackFormData) => {
+    addTrackQuery.post(`${Config.API_URL}/games/${currentGame.id}/tracks`, { name, artists: artists.map(artist => artist.name) });
+  }
+
   const handlePronosticRegister = (track: GameTrack, { score }: PronosticFormData) => {
     pronosticRegisterQuery.put(`${Config.API_URL}/games/${currentGame.id}/tracks/${track.id}/score`, { score }, {
       headers: { Authorization: `Bearer ${localStorage.getItem(LocalStorageKey.ACCESS_TOKEN)}` }
@@ -44,6 +66,10 @@ export const TrackList: React.FC = () => {
 
   const handleTrackPlayed = (track: GameTrack) => {
     playedTrackQuery.put(`${Config.API_URL}/games/${currentGame.id}/tracks/${track.id}/played`);
+  }
+
+  const handleFilter = (e: ChangeEvent<HTMLInputElement>) => {
+    setFilter(e.target.value);
   }
 
   return (
@@ -59,6 +85,7 @@ export const TrackList: React.FC = () => {
           <span>{currentGame.description}</span>
         </div>
         <div className="w-full overflow-x-auto rounded-lg shadow-lg">
+          <input placeholder="Filtrer..." onChange={handleFilter} />
           <table className="w-full">
             <thead>
               <tr className="text-md font-semibold tracking-wide  text-gray-900 bg-gray-100 uppercase border-b border-gray-600 text-center">
@@ -76,8 +103,16 @@ export const TrackList: React.FC = () => {
             </thead>
 
             <tbody className="bg-white">
-              {currentGame?.tracks ?
-                currentGame?.tracks.map((track: GameTrack, key) => (
+              {filteredTracks ?
+                filteredTracks.sort((a, b) => {
+                  if (a.name < b.name) {
+                    return -1;
+                  } else if (a.name > b.name) {
+                    return 1;
+                  } else {
+                    return 0;
+                  }
+                }).map((track: GameTrack, key) => (
                   <tr className="text-gray-700" key={key}>
                     <td className="px-4 py-3 border">
                       <div className="flex items-center text-sm">
@@ -121,6 +156,7 @@ export const TrackList: React.FC = () => {
 
             </tbody>
           </table>
+          <AddTrackForm onSubmit={handleAddTrack} />
         </div>
       </div>
     </section>
