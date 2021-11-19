@@ -43,8 +43,8 @@ export const GameContainer: React.FC = () => {
     }
   }, [createGameQuery.status]);
 
-  const handleCreateGame = ({ name, description }: CreateGameFormData) => {
-    createGameQuery.post(`${Config.API_URL}/games`, { name, description }, {
+  const handleCreateGame = ({ name, description, image }: CreateGameFormData) => {
+    createGameQuery.post(`${Config.API_URL}/games`, { name, description, image }, {
       headers: {
         Authorization: `Bearer ${localStorage.getItem(LocalStorageKey.ACCESS_TOKEN)}`
       }
