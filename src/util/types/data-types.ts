@@ -33,7 +33,7 @@ export interface GameData extends BaseData {
   tracks: GameTrack[];
 }
 
-export interface GameTrack {
+export interface GameTrack extends BaseData {
   name: string;
   artists: string[];
   scores: GameTrackScore[];
