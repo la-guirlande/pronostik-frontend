@@ -4,10 +4,11 @@ import { GameCard } from './game-card'
 
 export interface IGameLobbyProps{
   onSubmit: () => void;
-  games: GameData[]
+  games: GameData[];
+  onGameSelect: (game: GameData) => void;
 }
 
-export const GameLobby: FC<IGameLobbyProps> = ({onSubmit, games}) => (
+export const GameLobby: FC<IGameLobbyProps> = ({ onSubmit, games, onGameSelect }) => (
     <div className="flex flex-row justify-center">
       <div className="flex flex-col justify-start">
         <div className="font-montserrat text-2xl text-center my-6">
@@ -15,7 +16,7 @@ export const GameLobby: FC<IGameLobbyProps> = ({onSubmit, games}) => (
         </div>
         <div className="w-full flex flex-row justify-center">
           {
-            games?.map((game, key) => <GameCard key={key} name={game.name} description={game.description} players={game.players} tracks={game.tracks} id={game.id} />
+            games?.map((game, key) => <GameCard key={key} game={game} onClick={() => onGameSelect(game)} />
             )
           }
         </div>
@@ -27,4 +28,5 @@ export const GameLobby: FC<IGameLobbyProps> = ({onSubmit, games}) => (
         </button>
       </div>
     </div>
-  )
+  );
+

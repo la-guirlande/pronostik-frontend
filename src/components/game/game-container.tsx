@@ -1,74 +1,64 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Status, useQuery } from "../../hooks/query-hook";
 import { Config } from "../../util/config";
 import { LocalStorageKey } from "../../util/local-storage";
 import { GameData } from "../../util/types/data-types";
-import { GameResponse, GamesResponse } from "../../util/types/response-types";
+import { CreationResponse, GamesResponse } from "../../util/types/response-types";
+import { AuthenticationContext } from '../contexts/authentication-context';
+import { GameContext } from '../contexts/game-context';
 import { GameLobby } from "./game-lobby";
 import { TrackList } from "./tracklist";
 
 export const GameContainer: React.FC = () => {
-  const [game, setGame] = useState<GameData>();
-  const [games, setGames] = useState<GameData[]>();
-  const [showGame, setShowGame] = useState(false);
-  const [gameId, setGameId] = useState<string>("");
-  const getGameQuery = useQuery<GameResponse>();
-  const getGamesQuery = useQuery<GamesResponse>();
-  const createGameQuery = useQuery<GameResponse>();
+  const { authUser } = useContext(AuthenticationContext);
+  const { currentGame, updateCurrentGame, resetCurrentGame } = useContext(GameContext);
+  const [userGames, setUserGames] = useState<GameData[]>([]);
+  const userGamesQuery = useQuery<GamesResponse>();
+  const createGameQuery = useQuery<CreationResponse>();
 
   useEffect(() => {
-    switch (getGamesQuery.status) {
+    switch (userGamesQuery.status) {
       case Status.INIT:
-        getGamesQuery.get(`${Config.API_URL}/games`);
+        userGamesQuery.get(`${Config.API_URL}/users/${authUser.id}/games`);
         break;
       case Status.SUCCESS:
-        setGames(getGamesQuery.response.games);
+        setUserGames(userGamesQuery.response.games);
         break;
       case Status.ERROR:
-        console.error(getGamesQuery.errorResponse.errors);
+        console.error(userGamesQuery.errorResponse.errors);
         break;
-      default: break;
     }
-  }, [getGamesQuery.status])
-
-  useEffect(() => {
-    switch (getGameQuery.status) {
-      case Status.INIT:
-        getGameQuery.get(`${Config.API_URL}/games/${localStorage.getItem(LocalStorageKey.GAME_ID)}`);
-        break;
-      case Status.SUCCESS:
-        setGame(getGameQuery.response.game);
-        break;
-      case Status.ERROR:
-        console.error(getGameQuery.errorResponse.errors);
-        break;
-      default: break;
-    }
-  }, [getGameQuery.status]);
+  }, [userGamesQuery.status]);
 
   useEffect(() => {
     switch (createGameQuery.status) {
       case Status.SUCCESS:
-        setGameId(createGameQuery.response.game.id);
-        localStorage.setItem('game-id', createGameQuery.response.game.id);
+        updateCurrentGame(createGameQuery.response.id);
         break;
       case Status.ERROR:
-        console.error(createGameQuery.errorResponse.errors);
+        console.error('Could not create game :', createGameQuery.errorResponse.errors);
         break;
-      default: break;
     }
   }, [createGameQuery.status]);
 
   const handleCreateGame = () => {
-    createGameQuery.post(`${Config.API_URL}/games`,{
+    createGameQuery.post(`${Config.API_URL}/games`, {
       name: 'Ce cône',
       description: 'J\'espère qu\'il va pas passer le son de merde (celui que Otah a remixé après)'
     }, {
       headers: {
         Authorization: `Bearer ${localStorage.getItem(LocalStorageKey.ACCESS_TOKEN)}`
       }
-    })
+    });
   };
+
+  const handleGameSelect = (game: GameData) => {
+    updateCurrentGame(game.id);
+  }
+
+  const handleShowUserGames = () => {
+    resetCurrentGame();
+  }
 
   return (
     <>
@@ -78,19 +68,19 @@ export const GameContainer: React.FC = () => {
             <span className="font-light  font-montserrat text-4xl text-gray-700">
               Pronostik
             </span>
-            
           </div>
           <div className="h-full mt-36 w-full self-center">
-          <button className="font-montserrat font-light" onClick={() => setShowGame(!showGame)}>
-              Toggle
-            </button>
-            {
-              game && games && showGame ? <TrackList game={game} />
-              : <GameLobby onSubmit={handleCreateGame} games={games}/>
-            }
-           
+          {currentGame ? (
+            <div>
+              <button className="font-montserrat font-light" onClick={handleShowUserGames}>
+                Vos parties en cours
+              </button>
+              <TrackList game={currentGame} />
+            </div>
+          ) :
+            <GameLobby onSubmit={handleCreateGame} games={userGames} onGameSelect={handleGameSelect} />
+          }
           </div>
-
         </div>
       </div>
     </>
