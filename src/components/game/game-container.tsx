@@ -1,4 +1,5 @@
 import { useContext, useEffect, useState } from "react";
+import { Link } from 'react-router-dom';
 import { Status, useQuery } from "../../hooks/query-hook";
 import { Config } from "../../util/config";
 import { LocalStorageKey } from "../../util/local-storage";
@@ -77,9 +78,17 @@ export const GameContainer: React.FC = () => {
               </button>
               <TrackList game={currentGame} />
             </div>
-          ) :
-            <GameLobby onSubmit={handleCreateGame} games={userGames} onGameSelect={handleGameSelect} />
-          }
+          ) : (
+            <div>
+              <button className="mt-3 text-lg font-normal bg-gray-800 w-34 text-white rounded-sm px-6 py-3 block shadow-xl font-montserrat" onClick={handleCreateGame}>
+                  Créer une partie 
+              </button>
+              <Link className="mt-3 text-lg font-normal bg-gray-800 w-34 text-white rounded-sm px-6 py-3 block shadow-xl font-montserrat" to="/find">
+                  Trouver une partie
+              </Link>
+              <GameLobby games={userGames} onGameSelect={handleGameSelect} />
+            </div>
+          )}
           </div>
         </div>
       </div>
